@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<div th:replace="~{fragments/head :: head(title='Accorcia.it - 404')}"></div>
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="~{fragments/header :: header(dashUrl=${dashUrl})}"></div>
+<main class="container text-center my-5">
+    <h2>Errore 500</h2>
+    <p class="lead mt-3">
+        Errore interno del server<br>
+    </p>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="/webjars/bootstrap/5.3.5/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

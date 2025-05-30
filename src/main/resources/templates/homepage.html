@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<div th:replace="~{fragments/head :: head(title='Accorcia.it - Home')}"></div>
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="~{fragments/header :: header(dashUrl=${dashUrl})}"></div>
+<main class="container text-center my-5">
+    <h2>Benvenuto in Accorcia.it</h2>
+    <p class="lead mt-3">
+        Questo progetto è stato sviluppato per il corso di <strong>TIW (Tecnologie Informatiche per il Web)</strong><br>
+        Anno accademico <strong>2024/2025</strong> - Dipartimento <strong>IOL</strong>.<br>
+        L'applicazione è un semplice URL shortener scritto in Spring Boot e Angular <br>con funzioni
+        come URL personalizzati e scadenze per i link.<br>
+        L'accesso è consentito solo tramite codice di invito.
+        <br><br>
+        <a th:href="${dashUrl}">Vai alla dashboard</a> per iniziare a utilizzare l'applicazione.
+    </p>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="/webjars/bootstrap/5.3.5/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
