@@ -45,6 +45,29 @@ Effettua il login e ottieni un token JWT.
 }
 ```
 
+#### POST /api/change-password
+Cambia la password dell'utente già autenticato.
+
+**Header:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Corpo della richiesta:**
+```json
+{
+  "oldPassword": "nonsecure",
+  "newPassword": "password123"
+}
+```
+
+**Risposta:**
+```json
+{
+  "message": "Password cambiata con successo"
+}
+```
+
 ### Gestione URL
 
 #### POST /api/urls
@@ -82,7 +105,7 @@ Authorization: Bearer <jwt_token>
 ```
 
 #### PUT /api/urls/{shortCode}
-Aggiorna un URL accorciato (richiede autenticazione).
+Aggiorna un URL accorciato (richiede autenticazione).    
 
 **Header:**
 ```
@@ -111,6 +134,18 @@ Authorization: Bearer <jwt_token>
   "createdAt": "2024-01-15T10:30:00",
   "expirationDate": "2024-12-31T23:59:59",
   "visitCount": 0
+}
+```
+#### DELETE /api/urls/{shortCode}
+Elimina un URL accorciato (richiede autenticazione).
+**Header:**
+```
+Authorization: Bearer <jwt_token>
+```
+**Risposta:**
+```json
+{
+  "message": "URL eliminato con successo"
 }
 ```
 

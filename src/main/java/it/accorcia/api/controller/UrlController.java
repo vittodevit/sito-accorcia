@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,7 +96,7 @@ public class UrlController {
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> getUserUrls(Authentication auth) {
         User user = userRepository.findByUsername(auth.getName())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
         List<ShortenedUrl> urls = urlRepository.findByUser(user);
         List<Map<String, Object>> response = urls.stream()
@@ -107,16 +106,17 @@ public class UrlController {
         return ResponseEntity.ok(response);
     }
 
+    // TODO: implementare anche la versione con date range
     @GetMapping("/{shortCode}/stats")
     public ResponseEntity<?> getUrlStats(
       @PathVariable String shortCode,
       Authentication auth
     ) {
         ShortenedUrl url = urlRepository.findByShortCode(shortCode)
-            .orElseThrow(() -> new RuntimeException("URL not found"));
+            .orElseThrow(() -> new RuntimeException("URL non trovato"));
 
         if (!url.getUser().getUsername().equals(auth.getName())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Access denied"));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Accesso vietato"));
         }
 
         List<UrlVisit> visits = visitRepository.findByUrlOrderByVisitDateDesc(url);
@@ -132,6 +132,26 @@ public class UrlController {
             )).collect(Collectors.toList())
         ));
     }
+
+    @DeleteMapping("/{shortCode}")
+    public ResponseEntity<?> deleteShortUrl(
+        @PathVariable
+        String shortCode,
+        Authentication auth
+    ) {
+        ShortenedUrl url = urlRepository.findByShortCode(shortCode)
+            .orElseThrow(() -> new RuntimeException("URL not found"));
+
+        if (!url.getUser().getUsername().equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Accesso vietato"));
+        }
+
+        urlRepository.delete(url);
+        return ResponseEntity.ok(Map.of("message", "URL eliminato con successo"));
+    }
+
+
+    // TODO: implementare endpoint per ottenere tutte le visite di un UTENTE in un intervallo di date specificato
 
     private Map<String, Object> createUrlResponse(ShortenedUrl url) {
         return Map.of(
