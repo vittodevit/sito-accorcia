@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import {ApiConfigService} from './services/api-config.service';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -12,9 +11,7 @@ export class App {
 
   apiUrl: string = "";
 
-  constructor(
-    apiConfigService: ApiConfigService,
-  ) {
-    this.apiUrl = apiConfigService.getApiUrl();
+  constructor() {
+    this.apiUrl = environment.API_URL;
   }
 }
