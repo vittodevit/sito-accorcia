@@ -81,6 +81,39 @@ Authorization: Bearer <jwt_token>
 }
 ```
 
+#### PUT /api/urls/{shortCode}
+Aggiorna un URL accorciato (richiede autenticazione).
+
+**Header:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Corpo della richiesta:**
+```json
+{
+  "originalUrl": "https://example.com/very/long/url",
+  "expirationDate": "2024-12-31T23:59:59"
+}
+```
+
+**Note:**
+- `shortCode` non può essere modificato
+- i due valori vengono rispettivamente aggiornati solo se forniti
+
+**Risposta:**
+```json
+{
+  "id": 1,
+  "originalUrl": "https://example.com/very/long/url",
+  "shortCode": "custom123",
+  "shortUrl": "http://localhost:8080/custom123",
+  "createdAt": "2024-01-15T10:30:00",
+  "expirationDate": "2024-12-31T23:59:59",
+  "visitCount": 0
+}
+```
+
 #### GET /api/urls
 Recupera tutti gli URL dell’utente autenticato.
 

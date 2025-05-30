@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import it.accorcia.api.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +26,12 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
-    public String generateToken(String username) {
+    public String generateToken(User user) {
         return Jwts.builder()
-            .subject(username)
+            .subject(user.getUsername())
             .issuedAt(new Date())
+            .claim("id", user.getId())
+            .claim("email", user.getEmail())
             .expiration(new Date(System.currentTimeMillis() + expiration))
             .signWith(key(), SignatureAlgorithm.HS256)
             .compact();

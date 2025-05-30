@@ -1,6 +1,7 @@
 package it.accorcia.api.controller;
 
 import it.accorcia.api.dto.CreateUrlRequest;
+import it.accorcia.api.dto.EditUrlRequest;
 import it.accorcia.api.model.ShortenedUrl;
 import it.accorcia.api.model.UrlVisit;
 import it.accorcia.api.model.User;
@@ -37,12 +38,10 @@ public class UrlController {
     @Autowired
     private UrlVisitRepository visitRepository;
 
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
-
     @PostMapping
     public ResponseEntity<?> createShortUrl(
-        @RequestBody CreateUrlRequest request,
+        @RequestBody
+        CreateUrlRequest request,
         Authentication auth
     ) {
         User user = userRepository.findByUsername(auth.getName())
@@ -73,6 +72,28 @@ public class UrlController {
         return ResponseEntity.ok(createUrlResponse(url));
     }
 
+    @PutMapping("/{shortCode}")
+    public ResponseEntity<?> editShortUrl(
+        @PathVariable
+        String shortCode,
+        @RequestBody
+        EditUrlRequest request,
+        Authentication auth
+    ) {
+        ShortenedUrl url = urlRepository.findByShortCode(shortCode)
+            .orElseThrow(() -> new RuntimeException("URL non trovato"));
+
+        if (!url.getUser().getUsername().equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Accesso vietato"));
+        }
+
+        url.setOriginalUrl(request.getOriginalUrl());
+        url.setExpirationDate(request.getExpirationDate());
+
+        url = urlRepository.save(url);
+        return ResponseEntity.ok(createUrlResponse(url));
+    }
+
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> getUserUrls(Authentication auth) {
         User user = userRepository.findByUsername(auth.getName())
@@ -87,7 +108,10 @@ public class UrlController {
     }
 
     @GetMapping("/{shortCode}/stats")
-    public ResponseEntity<?> getUrlStats(@PathVariable String shortCode, Authentication auth) {
+    public ResponseEntity<?> getUrlStats(
+      @PathVariable String shortCode,
+      Authentication auth
+    ) {
         ShortenedUrl url = urlRepository.findByShortCode(shortCode)
             .orElseThrow(() -> new RuntimeException("URL not found"));
 

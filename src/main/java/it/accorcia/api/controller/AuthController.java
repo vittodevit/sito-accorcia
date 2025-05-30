@@ -1,5 +1,6 @@
 package it.accorcia.api.controller;
 
+import it.accorcia.api.dto.ChangePasswordRequest;
 import it.accorcia.api.dto.LoginRequest;
 import it.accorcia.api.dto.RegisterRequest;
 import it.accorcia.api.model.User;
@@ -8,6 +9,7 @@ import it.accorcia.api.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +24,7 @@ import java.util.Map;
  * utilizzando JWT (JSON Web Token) per l'autenticazione.
  */
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 public class AuthController {
 
     @Value("${deployment.invitecode}")
@@ -57,7 +59,7 @@ public class AuthController {
      * @param request Richiesta di registrazione contenente username, email e password
      * @return Risposta con esito della registrazione
      */
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<?> register(
         @RequestBody
         RegisterRequest request
@@ -97,7 +99,7 @@ public class AuthController {
      * @return Risposta con token JWT in caso di successo
      * @throws RuntimeException se l'utente non viene trovato
      */
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<?> login(
         @RequestBody
         LoginRequest request
@@ -109,12 +111,44 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", "Credenziali non valide"));
         }
 
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user);
 
         return ResponseEntity.ok(Map.of(
             "token", token,
             "type", "Bearer",
             "username", user.getUsername()
         ));
+    }
+
+    /**
+     * Gestisce la richiesta di cambio password da parte dell'utente autenticato.
+     * Verifica la vecchia password e aggiorna con la nuova password codificata.
+     *
+     * @param changePasswordRequest Richiesta contenente la vecchia e la nuova password
+     * @param auth Autenticazione corrente dell'utente
+     * @return Risposta con esito del cambio password
+     */
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(
+        @RequestBody
+        ChangePasswordRequest changePasswordRequest,
+        Authentication auth
+    ) {
+        User user = userRepository.findByUsername(auth.getPrincipal().toString())
+            .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+        if (!passwordEncoder.matches(
+          changePasswordRequest.getOldPassword(),
+          user.getPassword()
+        )) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Vecchia password non valida"));
+        }
+
+        user.setPassword(passwordEncoder.encode(
+          changePasswordRequest.getNewPassword()
+        ));
+
+        userRepository.save(user);
+        return ResponseEntity.ok(Map.of("message", "Password cambiata con successo"));
     }
 }
