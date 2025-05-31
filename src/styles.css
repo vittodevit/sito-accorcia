@@ -1,1 +1,10 @@
-/* You can add global styles to this file, and also import other style files */
+/*
+Impostazione font corretti per notifica snackbar e tooltip
+*/
+.mat-mdc-snack-bar-container .mdc-snackbar__label {
+  font-family: var(--bs-btn-font-family), sans-serif !important;
+}
+
+.mat-mdc-button {
+  font-family: var(--bs-btn-font-family), sans-serif !important;
+}

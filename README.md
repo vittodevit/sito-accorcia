@@ -173,7 +173,7 @@ Authorization: Bearer <jwt_token>
 ```
 
 #### GET /api/urls/{shortCode}/stats
-Ottieni statistiche dettagliate per uno specifico URL (richiede autenticazione e proprietà).
+Ottieni statistiche dettagliate dell'ultima settimana per uno specifico URL (richiede autenticazione e proprietà).
 
 **Header:**
 ```
@@ -184,6 +184,69 @@ Authorization: Bearer <jwt_token>
 ```json
 {
   "shortCode": "custom123",
+  "visitCount": 5,
+  "visits": [
+    {
+      "id": 1,
+      "visitDate": "2024-01-15T14:30:00",
+      "ipAddress": "192.168.1.100",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    }
+  ]
+}
+```
+
+#### GET /api/urls/{shortCode}/stats/range
+Ottieni statistiche dettagliate per uno specifico URL e in uno specifico lasso di tempo (richiede autenticazione e proprietà).
+
+**Header:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Corpo della richiesta:**
+```json
+{
+  "startDate": "2023-12-31T23:59:59",
+  "endDate": "2024-12-31T23:59:59"
+}
+```
+
+**Risposta:**
+```json
+{
+  "shortCode": "custom123",
+  "visitCount": 5,
+  "visits": [
+    {
+      "id": 1,
+      "visitDate": "2024-01-15T14:30:00",
+      "ipAddress": "192.168.1.100",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    }
+  ]
+}
+```
+
+#### GET /api/urls/accountstats
+Ottieni statistiche relativi a tutti gli URL dell'account autenticato in uno specifico lasso di tempo (richiede autenticazione).
+
+**Header:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Corpo della richiesta:**
+```json
+{
+  "startDate": "2023-12-31T23:59:59",
+  "endDate": "2024-12-31T23:59:59"
+}
+```
+
+**Risposta:**
+```json
+{
   "visitCount": 5,
   "visits": [
     {
@@ -229,25 +292,78 @@ Iscriversi a `/topic/url/{shortCode}` per ricevere aggiornamenti live sulle visi
 }
 ```
 
-## Risposte di Errore
+## Documentazione per `GlobalExceptionHandler`
 
-**400 Bad Request:**
+Il file `GlobalExceptionHandler` gestisce le eccezioni globali dell'applicazione, fornendo risposte JSON standardizzate per ogni tipo di errore. 
+
+### Formato Standard della Risposta JSON
+
+Ogni risposta di errore segue il seguente formato JSON:
+
 ```json
 {
-  "error": "Il codice breve esiste già"
+  "timestamp": "2024-01-15T10:30:00",
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Descrizione dell'errore",
+  "path": "/api/urls"
 }
 ```
 
-**401 Non Autorizzato:**
+#### Campi:
+- **timestamp**: Data e ora in cui si è verificato l'errore.
+- **status**: Codice di stato HTTP associato all'errore.
+- **error**: Descrizione dello stato HTTP.
+- **message**: Messaggio dettagliato dell'errore.
+- **path**: Percorso dell'endpoint che ha generato l'errore.
+
+---
+
+### Variazioni del Formato JSON
+```
+
+#### 1. **Token JWT Invalido**
+Quando un token JWT è invalido, scaduto o malformato, viene restituito un errore con stato `401 Unauthorized`.
+
 ```json
 {
-  "error": "Accesso negato"
+  "timestamp": "2024-01-15T10:30:00",
+  "status": 401,
+  "error": "Unauthorized",
+  "message": "Token JWT non valido",
+  "path": "/api/urls"
 }
 ```
 
-**404 Non Trovato:**
+#### 2. **Accesso Negato**
+Quando un utente tenta di accedere a una risorsa senza le autorizzazioni necessarie, viene restituito un errore con stato `403 Forbidden`.
+
 ```json
 {
-  "error": "URL non trovato"
+  "timestamp": "2024-01-15T10:30:00",
+  "status": 403,
+  "error": "Forbidden",
+  "message": "Accesso negato",
+  "path": "/api/urls"
 }
 ```
+
+#### 3. **Errore Generico**
+Per tutte le altre eccezioni non gestite specificamente, viene restituito un errore con stato `500 Internal Server Error`.
+
+```json
+{
+  "timestamp": "2024-01-15T10:30:00",
+  "status": 500,
+  "error": "Internal Server Error",
+  "message": "Errore interno del server",
+  "path": "/api/urls"
+}
+```
+
+---
+
+### Note
+- Il formato della risposta è progettato per essere leggibile e facilmente interpretabile dai client.
+- Ogni tipo di errore è associato a un codice di stato HTTP appropriato.
+- Gli errori di validazione includono dettagli specifici per ogni campo non valido.

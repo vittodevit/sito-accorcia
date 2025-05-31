@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.naming.AuthenticationException;
 import java.util.Map;
 
 /**
@@ -97,15 +98,15 @@ public class AuthController {
      *
      * @param request Richiesta di login contenente username e password
      * @return Risposta con token JWT in caso di successo
-     * @throws RuntimeException se l'utente non viene trovato
+     * @throws AuthenticationException se l'utente non viene trovato
      */
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(
         @RequestBody
         LoginRequest request
-    ) {
+    ) throws AuthenticationException {
         User user = userRepository.findByUsername(request.getUsername())
-            .orElseThrow(() -> new RuntimeException("Credenziali non valide"));
+            .orElseThrow(() -> new AuthenticationException("Credenziali non valide"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return ResponseEntity.badRequest().body(Map.of("error", "Credenziali non valide"));

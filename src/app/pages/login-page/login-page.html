@@ -1,0 +1,9 @@
+<form class="d-flex flex-row m-3 gap-3" (ngSubmit)="onSubmit()" #loginForm="ngForm">
+  <input type="text" class="form-control" name="username"
+         [(ngModel)]="username" placeholder="Username" required>
+  <input type="password" class="form-control" name="password"
+         [(ngModel)]="password" placeholder="Password" required>
+  <button class="btn btn-success w-100" type="submit">
+    Accedi
+  </button>
+</form>
