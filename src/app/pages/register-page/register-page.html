@@ -1,0 +1,61 @@
+<app-auth-page
+  title="Registrazione"
+  linkPrompt="Hai già un account?"
+  linkText="Accedi"
+  linkRoute="/login"
+>
+  <form class="mb-1" (ngSubmit)="onSubmit()" #registerForm="ngForm">
+    <div class="mb-2">
+      <app-input-field
+        [icon]="UserIcon"
+        name="username"
+        [(ngModel)]="username"
+        placeholder="Nome utente"
+        [required]="true"
+      ></app-input-field>
+    </div>
+    <div class="mb-2">
+      <app-input-field
+        [icon]="MailIcon"
+        name="email"
+        [(ngModel)]="email"
+        placeholder="Email"
+        type="email"
+        [required]="true"
+      ></app-input-field>
+    </div>
+    <div class="mb-2">
+      <app-input-field
+        [icon]="KeyRoundIcon"
+        name="password"
+        [(ngModel)]="password"
+        placeholder="Password"
+        type="password"
+        [required]="true"
+      ></app-input-field>
+    </div>
+    <div class="mb-2">
+      <app-input-field
+        [icon]="KeyRoundIcon"
+        name="passwordConfirm"
+        [(ngModel)]="passwordConfirm"
+        placeholder="Conferma password"
+        type="password"
+        [required]="true"
+      ></app-input-field>
+    </div>
+    <div class="mb-3">
+      <app-input-field
+        type="password"
+        [icon]="TicketIcon"
+        name="inviteCode"
+        [(ngModel)]="inviteCode"
+        placeholder="Codice di invito"
+        [required]="true"
+      ></app-input-field>
+    </div>
+    <button class="btn btn-primary w-100" type="submit">
+      Registrati
+    </button>
+  </form>
+</app-auth-page>

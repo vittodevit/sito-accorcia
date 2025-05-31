@@ -1,11 +1,20 @@
-.main {
-  width: 100%;
-  height: 100%;
+.min-width {
+  min-width: 250px !important;
 }
 
-.app-container {
+.ms12 {
+  margin-left: 12px !important;
+  padding-top: 14px !important;
+}
+
+.sidebar-heading {
+  font-size: 0.75rem;
   display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-right: 5px;
+}
+
+.hov-cur{
+  cursor: pointer;
 }

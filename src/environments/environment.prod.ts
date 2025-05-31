@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  API_URL: 'https://accorcia.it/api',
+  BACKEND_BASE_URL: 'https://accorcia.it',
   WS_URL: 'wss://accorcia.it/ws',
 };

@@ -1,0 +1,16 @@
+<div class="input-group">
+  <span class="input-group-text">
+    <lucide-angular [img]="icon" size="18"></lucide-angular>
+  </span>
+  <input
+    [type]="type"
+    class="form-control"
+    [name]="name"
+    [placeholder]="placeholder"
+    [required]="required"
+    [disabled]="disabled"
+    [ngModel]="value"
+    (ngModelChange)="onChange($event)"
+    (blur)="onTouched()"
+  >
+</div>

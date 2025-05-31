@@ -2,22 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-
-export interface CreateUrlRequest {
-  originalUrl: string;
-  shortCode?: string;
-  expirationDate?: string;
-}
-
-export interface EditUrlRequest {
-  originalUrl: string;
-  expirationDate?: string;
-}
-
-export interface DateRangeRequest {
-  startDate: string;
-  endDate: string;
-}
+import { CreateUrlRequest } from '../dto/CreateUrlRequest';
+import { EditUrlRequest } from '../dto/EditUrlRequest';
+import { DateRangeRequest } from '../dto/DateRangeRequest';
 
 /**
  * Servizio per la gestione degli URL accorciati.
@@ -105,7 +92,10 @@ export class UrlService {
    * @param dateRange L'intervallo di date per le statistiche
    * @returns Observable con le statistiche dell'URL
    */
-  getUrlStatsWithRange(shortCode: string, dateRange: DateRangeRequest): Observable<any> {
+  getUrlStatsWithRange(
+    shortCode: string,
+    dateRange: DateRangeRequest
+  ): Observable<any> {
     return this.http.post<any>(`/urls/${shortCode}/stats/range`, dateRange)
       .pipe(
         catchError(error => {

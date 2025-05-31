@@ -28,7 +28,7 @@ export const authInterceptor: HttpInterceptorFn = (
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  const rootApiUrl = environment.API_URL;
+  const rootApiUrl = environment.BACKEND_BASE_URL + '/api';
 
   // aggiunge il prefisso API all'URL della richiesta
   if (!request.url.startsWith(rootApiUrl)) {

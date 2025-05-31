@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  API_URL: 'http://localhost:8090/api',
+  BACKEND_BASE_URL: 'http://localhost:8090',
   WS_URL: 'ws://localhost:8090/ws',
 };

@@ -1,9 +1,31 @@
-<form class="d-flex flex-row m-3 gap-3" (ngSubmit)="onSubmit()" #loginForm="ngForm">
-  <input type="text" class="form-control" name="username"
-         [(ngModel)]="username" placeholder="Username" required>
-  <input type="password" class="form-control" name="password"
-         [(ngModel)]="password" placeholder="Password" required>
-  <button class="btn btn-success w-100" type="submit">
-    Accedi
-  </button>
-</form>
+<app-auth-page
+  title="Accesso dashboard"
+  linkPrompt="Non hai un account?"
+  linkText="Registrati"
+  linkRoute="/register"
+>
+  <form class="mb-1" (ngSubmit)="onSubmit()" #loginForm="ngForm">
+    <div class="mb-2">
+      <app-input-field
+        [icon]="UserIcon"
+        name="username"
+        [(ngModel)]="username"
+        placeholder="Username"
+        [required]="true"
+      ></app-input-field>
+    </div>
+    <div class="mb-3">
+      <app-input-field
+        [icon]="KeyRoundIcon"
+        name="password"
+        [(ngModel)]="password"
+        placeholder="Password"
+        type="password"
+        [required]="true"
+      ></app-input-field>
+    </div>
+    <button class="btn btn-primary w-100" type="submit">
+      Accedi
+    </button>
+  </form>
+</app-auth-page>

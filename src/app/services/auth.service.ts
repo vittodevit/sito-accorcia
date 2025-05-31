@@ -3,31 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import {environment} from '../../environments/environment';
-import {NotificationService} from './notification.service';
-
-export interface LoginResponse {
-  token: string;
-  type: string;
-  username: string;
-}
-
-export interface RegisterRequest {
-  username: string;
-  email: string;
-  password: string;
-  inviteCode: string;
-}
-
-export interface LoginRequest {
-  username: string;
-  password: string;
-}
-
-export interface ChangePasswordRequest {
-  oldPassword: string;
-  newPassword: string;
-}
+import { NotificationService } from './notification.service';
+import { RegisterRequest } from '../dto/RegisterRequest';
+import { LoginRequest } from '../dto/LoginRequest';
+import { LoginResponse } from '../dto/LoginResponse';
+import { ChangePasswordRequest } from '../dto/ChangePasswordRequest';
+import md5 from 'md5';
 
 /**
  * Servizio per la gestione dell'autenticazione degli utenti.
@@ -50,8 +31,6 @@ export class AuthService {
   public username$ = this.usernameSubject.asObservable();
 
   private tokenExpirationTimer: any;
-
-  private rootApiUrl = environment.API_URL
 
   constructor(
     private http: HttpClient,
@@ -149,6 +128,16 @@ export class AuthService {
   }
 
   /**
+   * Ottiene la foto profilo dell'utente autenticato.
+   *
+   * @returns URL dell'avatar Gravatar basato sull'email dell'utente
+   */
+  getProfilePicture(): string {
+    return localStorage.getItem('gravatar') ||
+      'https://www.gravatar.com/avatar/36549f39abeae93ba58e4ed6abf46d91?s=32&amp;d=mp';
+  }
+
+  /**
    * Gestisce il successo del login salvando il token e impostando il timer di scadenza.
    *
    * @param response Risposta dal server contenente il token JWT e il nome utente
@@ -165,6 +154,8 @@ export class AuthService {
     // Analizza il JWT per ottenere il tempo di scadenza
     const expirationTime = this.getTokenExpirationTime(token);
     localStorage.setItem(this.EXPIRATION_KEY, expirationTime.toString());
+    // Imposta l'email dell'utente per generare l'avatar Gravatar
+    localStorage.setItem('gravatar', this.getGravatarURL());
 
     // Imposta il logout automatico alla scadenza del token
     this.setTokenExpirationTimer(expirationTime);
@@ -209,6 +200,38 @@ export class AuthService {
       // Predefinito a 1 ora da adesso se l'analisi fallisce
       return Date.now() + 3600000;
     }
+  }
+
+  /**
+   * Ottiene l'email dell'utente dal local storage per generare l'avatar Gravatar.
+   * Se il token non è valido o non contiene un'email, restituisce un avatar predefinito.
+   *
+   * @return L'URL dell'avatar Gravatar basato sull'email dell'utente
+   */
+  private getGravatarURL(): string {
+    const token = this.getToken();
+    if (!token) return 'https://www.gravatar.com/avatar/36549f39abeae93ba58e4ed6abf46d91?s=32&amp;d=mp';
+
+    try {
+      const payload = token.split('.')[1];
+      const decodedPayload = JSON.parse(atob(payload));
+      if (decodedPayload && decodedPayload.email) {
+        const emailHash = md5(decodedPayload.email.trim().toLowerCase());
+        return `https://www.gravatar.com/avatar/${emailHash}?d=identicon`;
+      }
+      return 'https://www.gravatar.com/avatar/36549f39abeae93ba58e4ed6abf46d91?s=32&amp;d=mp';
+    } catch (error) {
+      return 'https://www.gravatar.com/avatar/36549f39abeae93ba58e4ed6abf46d91?s=32&amp;d=mp';
+    }
+  }
+
+  /**
+   * Ottieni il nome utente salvato nel localStorage.
+   *
+   * @return Il nome utente o null se non presente
+   */
+  getUsername(): string | null {
+    return localStorage.getItem(this.USERNAME_KEY);
   }
 
   /**

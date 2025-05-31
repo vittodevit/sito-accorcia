@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import {environment} from '../../../environments/environment';
-import {AuthService} from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home-page',
@@ -14,7 +14,7 @@ export class HomePage {
   constructor(
     private authService: AuthService
   ) {
-    this.apiUrl = environment.API_URL;
+    this.apiUrl = environment.BACKEND_BASE_URL;
   }
 
   logout() {

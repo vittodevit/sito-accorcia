@@ -1,0 +1,24 @@
+<div class="auth-page">
+  <div class="auth-page-overlay">
+    <div class="auth-page-container">
+      <div class="auth-card border mx-3">
+        <div class="mb-2 d-flex flex-row" style="gap: 10px;">
+          <img src="/logotsp.png" height="30" alt="Logo" class="auth-logo">
+          <h2 class="title">{{ title }}</h2>
+        </div>
+        <hr style="margin-top: 13px; !important;">
+
+        <!-- Content projection for the form -->
+        <ng-content></ng-content>
+
+        <hr>
+        <div class="text-center">
+          {{ linkPrompt }}
+          <a [routerLink]="linkRoute" class="alert-link">
+            {{ linkText }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
