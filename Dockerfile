@@ -5,11 +5,11 @@ FROM node:22-alpine AS angular-build
 WORKDIR /app/frontend
 
 # Copy package files and install dependencies
-COPY frontend/package*.json ./
+COPY package*.json ./
 RUN npm ci --legacy-peer-deps
 
 # Copy the rest of the Angular app and build it
-COPY frontend/ .
+COPY ./ .
 RUN npm run build --omit=dev
 
 # ---- Stage 2: Build Spring Boot app ----
@@ -19,7 +19,7 @@ FROM maven:3.9-amazoncorretto-21 AS spring-build
 WORKDIR /app/backend
 
 # Copy the Spring Boot project
-COPY backend/ .
+COPY ./ .
 
 # Build the Spring Boot application
 RUN mvn clean package -DskipTests
