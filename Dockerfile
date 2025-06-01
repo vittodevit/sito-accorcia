@@ -48,11 +48,10 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose ports for both applications
 EXPOSE 4200 8090
 
+COPY start.sh /app/start.sh
+
 # Create startup script
-RUN echo '#!/bin/sh \n\
-nginx & \n\
-java -jar /app/app.jar' > /app/start.sh && \
-chmod +x /app/start.sh
+RUN chmod +x /app/start.sh
 
 # Run both applications
 CMD ["/app/start.sh"]
