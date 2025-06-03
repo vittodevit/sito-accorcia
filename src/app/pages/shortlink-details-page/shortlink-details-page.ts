@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +18,7 @@ import { ThemeService } from '../../services/theme.service';
 import { DateRangeRequest } from '../../dto/DateRangeRequest';
 import { EditUrlRequest } from '../../dto/EditUrlRequest';
 import { Subscription } from 'rxjs';
+import { QRCodeComponent } from 'angularx-qrcode';
 import {
   LucideAngularModule,
   AlertTriangleIcon,
@@ -25,8 +26,14 @@ import {
   EditIcon,
   TrashIcon,
   QrCodeIcon,
-  LinkIcon, ClipboardCopyIcon
+  LinkIcon,
+  ClipboardCopyIcon,
+  DownloadIcon
 } from 'lucide-angular';
+
+//#region funzioni globali
+declare function downloadCanvasAsImage(shortlink: string): void;
+//#endregion
 
 /**
  * Componente della pagina di dettaglio di un shortlink.
@@ -59,11 +66,15 @@ import {
     PaginatorModule,
     ToggleButtonModule,
     DraggableModal,
-    LucideAngularModule
+    LucideAngularModule,
+    QRCodeComponent
   ],
   templateUrl: './shortlink-details-page.html'
 })
 export class ShortLinkDetailsPage implements OnInit, OnDestroy {
+  /** Reference to the QR code element for download functionality */
+  @ViewChild('qrCodeComponent') qrCodeElement!: ElementRef;
+
   /** Codice breve dell'URL di cui visualizzare i dettagli */
   shortCode: string = '';
 
@@ -126,6 +137,7 @@ export class ShortLinkDetailsPage implements OnInit, OnDestroy {
   protected readonly TrashIcon = TrashIcon;
   protected readonly QrCodeIcon = QrCodeIcon;
   protected readonly LinkIcon = LinkIcon;
+  protected readonly DownloadIcon = DownloadIcon;
 
   /**
    * Inizializza il componente e imposta l'intervallo di date predefinito.
@@ -559,6 +571,14 @@ export class ShortLinkDetailsPage implements OnInit, OnDestroy {
    */
   openQrModal() {
     this.showQrModal = true;
+  }
+
+  /**
+   * Scarica il codice QR come immagine PNG.
+   * Converte l'elemento SVG del QR code in un'immagine e la scarica.
+   */
+  downloadQrCode() {
+    downloadCanvasAsImage(this.shortCode)
   }
 
   protected readonly ClipboardCopyIcon = ClipboardCopyIcon;

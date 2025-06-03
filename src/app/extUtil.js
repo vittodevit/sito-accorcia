@@ -1,14 +1,18 @@
 /**
- * Utility JavaScript per la gestione del tema dell'applicazione (chiaro/scuro).
+ * Utility JavaScript per la gestione del tema dell'applicazione (chiaro/scuro) e
+ * per il download di immagini dai canvas.
  *
  * Questo script fornisce funzionalità per:
  * - Alternare tra tema chiaro e scuro
  * - Salvare la preferenza del tema nel localStorage
  * - Caricare il tema preferito all'avvio dell'applicazione
  * - Ottenere il tema corrente
+ * - Scaricare il primo canvas come immagine PNG
  *
  * Funziona modificando l'attributo 'data-bs-theme' dell'elemento HTML root,
  * che viene utilizzato da Bootstrap per applicare gli stili del tema.
+ *
+ * Spiegazione per il download delle immagini direttamente sulla relativa funzione.
  */
 
 /** Riferimento all'elemento HTML root del documento */
@@ -48,5 +52,35 @@ function getCurrentTheme() {
   return htmlElement.getAttribute('data-bs-theme') || 'light';
 }
 
-// Carica il tema all'avvio dello script
+/**
+ * Scarica il primo canvas "pulito" (non gestito da Chart.js) come immagine PNG.
+ * Questo perchè l'unico canvas non gestito da Chart.js in tutta l'applicazione
+ * è quello per generare il QR code di uno shortlink.
+ *
+ * @param {string} shortlink - Lo shortlink da utilizzare nel nome del file scaricato.
+ *
+ * Soluzione parecchio vergognosa, tuttavia, nel contesto dell'applicazione ha senso.
+ */
+function downloadCanvasAsImage(shortlink) {
+  // prendi tutti i canvas della pagina
+  const canvases = document.getElementsByTagName("canvas");
+
+  for (let i = 0; i < canvases.length; i++) {
+    const canvas = canvases[i];
+
+    // salta i canvas gestiti da Chart.js
+    if (canvas.$chartjs != null) continue;
+
+    // primo e unico canvas trovato, lo scarica come immagine
+    const image = canvas.toDataURL("image/png");
+
+    const link = document.createElement("a");
+    link.download = `qr-code-accorcia-${shortlink}.png`;
+    link.href = image;
+    link.click();
+
+    break;
+  }
+}
+
 loadTheme();

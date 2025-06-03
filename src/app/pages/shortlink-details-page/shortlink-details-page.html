@@ -77,15 +77,15 @@
   <!-- Informazioni sull'URL -->
   <div class="ms-3 mb-1" *ngIf="urlDetails && !loading">
     <p class="mb-0">
-      <strong>URL originale:</strong>
+      <strong>URL originale: </strong>
       <a href="{{ urlDetails.originalUrl }}" target="_blank">{{ urlDetails.originalUrl }}</a>
       <br>
 
-      <strong>Data creazione:</strong>
+      <strong>Data creazione: </strong>
       {{ urlDetails.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}
       <br>
 
-      <strong>Scadenza:</strong>
+      <strong>Scadenza: </strong>
       {{ urlDetails.expirationDate === 'never' ? 'Mai' :
       (urlDetails.expirationDate | date:'dd/MM/yyyy HH:mm:ss') }}
     </p>
@@ -208,19 +208,24 @@
   <app-draggable-modal
     title="Codice QR"
     (close)="showQrModal = false"
-    [width]="'400px'"
+    [width]="'350px'"
   >
-    <div class="p-3 text-center">
-      <p>Scansiona questo codice QR per accedere all'URL:</p>
+    <div class="p-1 text-center">
       <p><strong>{{ urlDetails?.shortUrl }}</strong></p>
-      <div class="d-flex justify-content-center my-3">
-        <!-- Qui verrà inserito il codice QR in futuro -->
-        <div class="border p-3">
-          <p>Placeholder per il codice QR</p>
-          <p>URL: {{ urlDetails?.shortUrl }}</p>
-        </div>
+      <div class="d-flex justify-content-center my-3" #qrCode>
+        <qrcode
+          #qrCodeComponent
+          [qrdata]="urlDetails?.shortUrl || ''"
+          [width]="200"
+          [errorCorrectionLevel]="'M'"
+          [cssClass]="'border p-3'"
+        ></qrcode>
       </div>
-      <div class="d-flex justify-content-end">
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button class="btn btn-primary" (click)="downloadQrCode()">
+          <lucide-angular [img]="DownloadIcon" size="16" class="mb-1 me-1"/>
+          Scarica
+        </button>
         <button class="btn btn-secondary" (click)="showQrModal = false">Chiudi</button>
       </div>
     </div>

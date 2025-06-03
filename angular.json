@@ -32,7 +32,7 @@
               "@angular/material/prebuilt-themes/azure-blue.css"
             ],
             "scripts": [
-              "src/app/themeSwitcher.js"
+              "src/app/extUtil.js"
             ]
           },
           "configurations": {
