@@ -12,7 +12,7 @@
 }
 
 .modal-window {
-  background: #212529;
+  background: var(--bs-body-bg);
   width: 400px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -20,8 +20,8 @@
 }
 
 .title-bar {
-  background: #2d3238;
-  color: white;
+  background: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
   cursor: move;
   display: flex;
   justify-content: space-between;
@@ -41,17 +41,17 @@
   justify-items: center;
   cursor: pointer;
   height: 100%;
-  border-left: #464646 1px solid;
+  border-left: var(--bs-border-color) 1px solid;
 }
 
 .close-btn:hover {
-  background: #14294d;
+  background: #b4b4b4;
 }
 
 .lucide {
   margin-top: 7px;
   margin-bottom: 7px;
-  color: white;
+  color: var(--bs-body-color);
 }
 
 .close-btn button {

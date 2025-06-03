@@ -166,12 +166,12 @@
     (close)="showEditModal = false"
     [width]="'550px'"
   >
-    <div class="p-3">
+    <div class="p-1">
       <div class="mb-3">
         <label for="originalUrl" class="form-label">URL originale</label>
         <input type="text" class="form-control" id="originalUrl" [(ngModel)]="editFormData.originalUrl" required>
       </div>
-      <div class="mb-3">
+      <div class="mb-4">
         <label for="expirationDate" class="form-label">Data di scadenza (opzionale)</label>
         <input type="datetime-local" class="form-control" id="expirationDate" [(ngModel)]="editFormData.expirationDate">
       </div>
@@ -188,12 +188,11 @@
   <app-draggable-modal
     title="Elimina URL"
     (close)="showDeleteModal = false"
-    [width]="'450px'"
+    [width]="'400px'"
   >
     <div class="p-1">
-      <p class="pb-2">
+      <p class="pb-2 text-wrap">
         Sei sicuro di voler eliminare questo URL?<br>
-        <strong>{{ shortCode }}</strong> - {{ urlDetails?.originalUrl }} <br>
         <span class="text-danger">Questa azione non può essere annullata.</span>
       </p>
       <div class="d-flex justify-content-end gap-2">
