@@ -35,7 +35,7 @@ export class WebSocketService {
    */
   connect(): void {
     console.log('Connessione WebSocket in corso...', environment.WS_URL);
-    const socket = new SockJS(environment.WS_URL);
+    const socket = new SockJS(environment.WS_URL + '?token=' + this.authService.getToken());
     this.stompClient = Stomp.over(socket);
 
     // Aggiunge il token JWT alla connessione WebSocket

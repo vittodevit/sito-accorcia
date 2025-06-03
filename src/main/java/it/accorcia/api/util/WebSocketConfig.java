@@ -53,7 +53,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
             .setAllowedOriginPatterns(dashboardUrl)
-            //.addInterceptors(new JwtHandshakeInterceptor(jwtUtil))
+            .addInterceptors(new JwtHandshakeInterceptor(jwtUtil))
             .withSockJS();
     }
 }

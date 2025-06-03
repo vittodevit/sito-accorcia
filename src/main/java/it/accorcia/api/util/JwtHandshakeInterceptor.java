@@ -73,6 +73,11 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
      * @return il token JWT estratto o null se non presente
      */
     private String extractTokenFromQuery(ServerHttpRequest request) {
+        // cerca prima negli header
+        String token = request.getHeaders().getFirst("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7); // rimuove "Bearer "
+        }
         String query = request.getURI().getQuery();
         if (query != null && query.contains("token=")) {
             return query.substring(query.indexOf("token=") + 6);
