@@ -82,7 +82,8 @@ public class SecurityConfig {
                     "/images/**",
                     "/webjars/**",
                     "/",
-                    "/ws/**"
+                    "/ws/**",
+                    "/ws/info"
                 ).permitAll()
                 .anyRequest().authenticated())
             .addFilterBefore(

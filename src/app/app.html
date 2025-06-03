@@ -1,33 +1,45 @@
-<div class="d-flex flex-column overflow-x-hidden h-100">
+<div class="d-flex flex-column h-100" style="min-height: 100vh;">
   @if (showNav) {
     <app-header/>
   }
-  <main class="h-100 flex-grow-1">
+  <main class="flex-grow-1 overflow-x-hidden">
     <div class="row h-100">
       @if (showNav && showSidebar) {
         <div class="col-auto border-end min-width ms12">
           <div class="d-flex flex-column">
             <ul class="nav nav-pills flex-column mb-auto">
-              <app-nav-item [icon]="HomeIcon" text="Dashboard" [active]="true"/>
-              <app-nav-item [icon]="KeyIcon" text="Cambia password" [active]="false"/>
+              <app-nav-item [icon]="HomeIcon" text="Dashboard" link="/"/>
+              <app-nav-item [icon]="KeyIcon" text="Cambia password" link="/chgpwd"/>
 
-              <h6 class="mt-3 mb-1 ms-2 text-secondary text-uppercase sidebar-heading">
+              <h6 class="mt-3 mb-2 ms-2 text-secondary text-uppercase sidebar-heading">
                 I tuoi link
-                <lucide-angular [img]="PlusCircleIcon" size="16" class="my-auto d-block hov-cur"/>
+                <a routerLink="/new" class="d-block p-0">
+                  <lucide-angular [img]="PlusCircleIcon" size="16" class="my-auto d-block hov-cur"/>
+                </a>
               </h6>
 
-              <app-nav-item [icon]="LinkIcon" text="prova2" [active]="false"/>
+              @if (userUrls.length > 0) {
+                @for (url of userUrls; track url.id) {
+                  <app-nav-item [icon]="LinkIcon" [text]="url.shortCode" [link]="`/sc/${url.shortCode}`"/>
+                }
+              } @else {
+                <li class="nav-item">
+                  <span class="nav-link link-body-emphasis d-flex flex-row gap-2 text-muted fst-italic small">
+                    Nessun link creato
+                  </span>
+                </li>
+              }
             </ul>
           </div>
         </div>
       }
-      <div class="col">
+      <div class="col overflow-y-auto">
         <router-outlet/>
       </div>
     </div>
   </main>
   @if (showNav) {
-    <footer class="bg-body text-center py-2 mt-auto border-top mb-1">
+    <footer class="bg-body text-center py-2 mt-auto border-top">
       <div class="container">
         <small>
           &copy; 2025 <a href="https://github.com/vittodevit" target="_blank">Vittorio Lo Mele</a>

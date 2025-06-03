@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { NotificationService } from './notification.service';
+import { UrlService } from './url.service';
 import { RegisterRequest } from '../dto/RegisterRequest';
 import { LoginRequest } from '../dto/LoginRequest';
 import { LoginResponse } from '../dto/LoginResponse';
@@ -35,7 +36,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private urlService: UrlService
   ) {
     this.checkTokenExpiration();
   }
@@ -166,6 +168,9 @@ export class AuthService {
 
     // Reindirizza l'utente alla pagina principale dopo il login
     this.router.navigate(['/']);
+
+    // invia segnale di caricamento lista URL ai componenti interessati
+    this.urlService.refreshUrls();
   }
 
   /**
@@ -232,6 +237,17 @@ export class AuthService {
    */
   getUsername(): string | null {
     return localStorage.getItem(this.USERNAME_KEY);
+  }
+
+  /**
+   * Utility function per reindirizzare l'utente alla homepage o alla pagina di login
+   */
+  redirectToHomepage(): void {
+    if (this.isAuthenticated()) {
+      this.router.navigate(['/']);
+    } else {
+      this.router.navigate(['/login']);
+    }
   }
 
   /**

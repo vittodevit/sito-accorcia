@@ -1,0 +1,20 @@
+<div class="container">
+  <canvas #riveCanvas width="1000" height="500"> </canvas>
+  <div class="form-wrapper">
+    <div class="form" id="form">
+      <div class="request">
+        <div class="top">
+          <input type="text" name="shortName" [(ngModel)]="shortName" placeholder="Short name"/>
+          <input type="date" name="expirationDate" [(ngModel)]="expirationDate" placeholder="Expiration"/>
+        </div>
+        <div class="bottom">
+          <input type="text" name="fullLink" [(ngModel)]="fullLink" placeholder="Full link"/>
+        </div>
+        <button (click)="onSubmit()">Accorcia</button>
+      </div>
+    </div>
+    <div class="response" id="response">
+      <p>test.com</p>
+    </div>
+  </div>
+</div>

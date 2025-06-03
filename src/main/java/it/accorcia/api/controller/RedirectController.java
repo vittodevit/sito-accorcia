@@ -46,6 +46,7 @@ public class RedirectController {
         if (url == null || url.isExpired()) {
             HttpHeaders headers = new HttpHeaders();
             headers.setLocation(URI.create("/404"));
+            // found perchè il 404 viene gestito da un template (vedi HomeController)
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
 

@@ -196,8 +196,11 @@ Authorization: Bearer <jwt_token>
 }
 ```
 
-#### GET /api/urls/{shortCode}/stats/range
+#### POST /api/urls/{shortCode}/stats/range
 Ottieni statistiche dettagliate per uno specifico URL e in uno specifico lasso di tempo (richiede autenticazione e proprietà).
+
+**Note:**
+- è stata scelta una richiesta di tipo POST per inserire il range come body JSON
 
 **Header:**
 ```
@@ -228,8 +231,12 @@ Authorization: Bearer <jwt_token>
 }
 ```
 
-#### GET /api/urls/accountstats
+#### POST /api/urls/accountstats
 Ottieni statistiche relativi a tutti gli URL dell'account autenticato in uno specifico lasso di tempo (richiede autenticazione).
+
+**Note:**
+- è stata scelta una richiesta di tipo POST per inserire il range come body JSON
+
 
 **Header:**
 ```
@@ -248,9 +255,14 @@ Authorization: Bearer <jwt_token>
 ```json
 {
   "visitCount": 5,
+  "visitDetailedCounter": {
+    "abc123": 3,
+    "xyz789": 2
+  },
   "visits": [
     {
       "id": 1,
+      "shortCode": "abc123",
       "visitDate": "2024-01-15T14:30:00",
       "ipAddress": "192.168.1.100",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
@@ -320,7 +332,6 @@ Ogni risposta di errore segue il seguente formato JSON:
 ---
 
 ### Variazioni del Formato JSON
-```
 
 #### 1. **Token JWT Invalido**
 Quando un token JWT è invalido, scaduto o malformato, viene restituito un errore con stato `401 Unauthorized`.
@@ -367,3 +378,8 @@ Per tutte le altre eccezioni non gestite specificamente, viene restituito un err
 - Il formato della risposta è progettato per essere leggibile e facilmente interpretabile dai client.
 - Ogni tipo di errore è associato a un codice di stato HTTP appropriato.
 - Gli errori di validazione includono dettagli specifici per ogni campo non valido.
+### Possibili miglioramenti
+- Implementare rate limiting per prevenire abusi del servizio.
+- Effettuare migliori validazioni sui DTO lato backend.
+- Implementare ReCaptcha per prevenire spam nei form di registrazione e login.
+- Rendere la grafica del frontend più responsive e user-friendly.

@@ -29,7 +29,7 @@ export class LoginPage {
       password: this.password
     }
 
-    this.authService.login(loginRequest).subscribe()
+    this.authService.login(loginRequest).subscribe(); // invio richiesta a BE
   }
 
   protected readonly KeyRoundIcon = KeyRoundIcon;

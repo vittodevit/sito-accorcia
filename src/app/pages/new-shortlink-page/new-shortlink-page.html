@@ -1,0 +1,45 @@
+<!-- <app-rive-form/> -->
+<div class="d-flex flex-row justify-content-center align-items-center h-75">
+  <div class="card" style="width: 33rem;">
+    <div class="card-body">
+      <form class="mb-1" (ngSubmit)="onSubmit()" #newShortlinkForm="ngForm">
+        <div class="mb-2">
+          <app-input-field
+            [icon]="LinkIcon"
+            name="longLink"
+            [(ngModel)]="longLink"
+            placeholder="Link lungo"
+            type="text"
+            [required]="true"
+          ></app-input-field>
+        </div>
+
+        <hr>
+
+        <div class="mb-3">
+          <app-input-field
+            [icon]="Link2Icon"
+            label="Link corto (lascia vuoto per generare automaticamente):"
+            name="shortLink"
+            [(ngModel)]="shortLink"
+            placeholder="Inserisci nome del link corto..."
+          ></app-input-field>
+        </div>
+
+        <div class="mb-3">
+          <app-input-field
+            [icon]="BombIcon"
+            name="expirationDate"
+            label="Data di scadenza (lascia vuoto per disabilitarla):"
+            [(ngModel)]="expirationDate"
+            type="date"
+          ></app-input-field>
+        </div>
+
+        <button class="btn btn-primary w-100" type="submit">
+          Crea link
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, throwError, Subject } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { CreateUrlRequest } from '../dto/CreateUrlRequest';
 import { EditUrlRequest } from '../dto/EditUrlRequest';
 import { DateRangeRequest } from '../dto/DateRangeRequest';
@@ -14,6 +14,19 @@ import { DateRangeRequest } from '../dto/DateRangeRequest';
   providedIn: 'root'
 })
 export class UrlService {
+  /**
+   * Subject privato per emettere eventi di aggiornamento degli URL.
+   * Viene utilizzato internamente per notificare i componenti sottoscritti
+   * quando la lista degli URL viene modificata.
+   */
+  private urlsRefresh = new Subject<void>();
+
+  /**
+   * Observable pubblico a cui i componenti possono sottoscriversi
+   * per ricevere notifiche quando la lista degli URL viene modificata.
+   */
+  urlsRefresh$ = this.urlsRefresh.asObservable();
+
   constructor(private http: HttpClient) {}
 
   /**
@@ -24,6 +37,10 @@ export class UrlService {
   createUrl(request: CreateUrlRequest): Observable<any> {
     return this.http.post<any>('/urls', request)
       .pipe(
+        tap(() => {
+          // Notifica i componenti sottoscritti che la lista degli URL è stata modificata
+          this.refreshUrls();
+        }),
         catchError(error => {
           return throwError(() => error.error?.error || 'Impossibile creare URL');
         })
@@ -39,6 +56,10 @@ export class UrlService {
   editUrl(shortCode: string, request: EditUrlRequest): Observable<any> {
     return this.http.put<any>(`/urls/${shortCode}`, request)
       .pipe(
+        tap(() => {
+          // Notifica i componenti sottoscritti che la lista degli URL è stata modificata
+          this.refreshUrls();
+        }),
         catchError(error => {
           return throwError(() => error.error?.error || 'Impossibile modificare URL');
         })
@@ -53,10 +74,23 @@ export class UrlService {
   deleteUrl(shortCode: string): Observable<any> {
     return this.http.delete<any>(`/urls/${shortCode}`)
       .pipe(
+        tap(() => {
+          // Notifica i componenti sottoscritti che la lista degli URL è stata modificata
+          this.refreshUrls();
+        }),
         catchError(error => {
           return throwError(() => error.error?.error || 'Impossibile eliminare URL');
         })
       );
+  }
+
+  /**
+   * Notifica i componenti sottoscritti che la lista degli URL è stata modificata.
+   * Questo metodo può essere chiamato manualmente quando si desidera forzare
+   * un aggiornamento della lista degli URL.
+   */
+  refreshUrls(): void {
+    this.urlsRefresh.next();
   }
 
   /**

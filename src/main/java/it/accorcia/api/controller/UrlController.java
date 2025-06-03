@@ -72,7 +72,7 @@ public class UrlController {
         Authentication auth
     ) {
         User user = userRepository.findByUsername(auth.getName())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
         String shortCode = request.getShortCode();
         if (shortCode == null || shortCode.isEmpty()) {
@@ -80,7 +80,7 @@ public class UrlController {
         }
 
         if (urlRepository.existsByShortCode(shortCode)) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Short code already exists"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Short code già esistente"));
         }
 
         ShortenedUrl url = ShortenedUrl.builder()
@@ -200,7 +200,7 @@ public class UrlController {
      * @param auth l'oggetto di autenticazione dell'utente corrente
      * @return le statistiche di visita dell'URL nell'intervallo di date specificato
      */
-    @GetMapping("/{shortCode}/stats/range")
+    @PostMapping("/{shortCode}/stats/range")
     public ResponseEntity<?> getUrlStatsWithRange(
       @PathVariable
       String shortCode,
@@ -248,7 +248,7 @@ public class UrlController {
         Authentication auth
     ) {
         ShortenedUrl url = urlRepository.findByShortCode(shortCode)
-            .orElseThrow(() -> new RuntimeException("URL not found"));
+            .orElseThrow(() -> new RuntimeException("URL non trovato"));
 
         if (!url.getUser().getUsername().equals(auth.getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Accesso vietato"));
@@ -265,7 +265,7 @@ public class UrlController {
      * @param auth l'oggetto di autenticazione dell'utente corrente
      * @return le statistiche di visita di tutti gli URL dell'utente nell'intervallo di date specificato
      */
-    @GetMapping("/accountstats")
+    @PostMapping("/accountstats")
     public ResponseEntity<?> getAccountStatsWithRange(
       @RequestBody
       DateRangeRequest dateRangeRequest,
@@ -280,8 +280,18 @@ public class UrlController {
         dateRangeRequest.getEndDate()
       );
 
+      List<Map<String, Object>> visitDetailedCounter = visitRepository.countVisitsByUserAndDateRange(
+          user,
+          dateRangeRequest.getStartDate(),
+          dateRangeRequest.getEndDate()
+      );
+
       return ResponseEntity.ok(Map.of(
         "visitCount", visits.size(),
+          "visitDetailedCounter", visitDetailedCounter.stream().collect(Collectors.toMap(
+              map -> (String) map.get("shortCode"),
+              map -> (Long) map.get("visitCount")
+          )),
         "visits", visits.stream().map(visit -> Map.of(
           "id", visit.getId(),
           "shortCode", visit.getUrl().getShortCode(),

@@ -14,49 +14,9 @@
 </head>
 <body class="h-100">
   <app-root></app-root>
-  <div class="position-fixed bottom-0 end-0 mb-3 me-3" style="z-index: 1500;">
-    <button
-      class="btn btn-primary"
-      style="padding-bottom: 10px; box-sizing: initial;"
-      id="toggleThemeButton"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20" height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="#fff"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M12 8a2.83 2.83 0 0 0 4 4 4 4 0 1 1-4-4"/>
-        <path d="M12 2v2"/><path d="M12 20v2"/>
-        <path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/>
-        <path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.3 17.7-1.4 1.4"/>
-        <path d="m19.1 4.9-1.4 1.4"/>
-      </svg>
-    </button>
-  </div>
 </body>
-<script>
-  const htmlElement = document.documentElement;
-
-  function toggleTheme() {
-    const currentTheme = htmlElement.getAttribute('data-bs-theme') || 'light';
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    htmlElement.setAttribute('data-bs-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-  }
-
-  function loadTheme() {
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-      htmlElement.setAttribute('data-bs-theme', storedTheme);
-    }
-  }
-
-  loadTheme();
-  document.getElementById('toggleThemeButton').addEventListener('click', toggleTheme);
+<script type="application/javascript">
+  // fix sockjs
+  var global = window;
 </script>
 </html>

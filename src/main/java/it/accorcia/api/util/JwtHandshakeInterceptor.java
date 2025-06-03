@@ -44,6 +44,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
         WebSocketHandler wsHandler,
         Map<String, Object> attributes
     ) {
+        System.out.println("Handshake WebSocket");
         String token = extractTokenFromQuery(request);
         if (token != null && jwtUtil.validateToken(token)) {
             String username = jwtUtil.getUsernameFromToken(token);

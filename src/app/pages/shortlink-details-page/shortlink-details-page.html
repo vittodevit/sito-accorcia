@@ -1,0 +1,229 @@
+<div class="mt-2 me-3">
+  <!-- Header con titolo e pulsanti -->
+  <div class="d-flex flex-row justify-content-between ms-1 align-items-center">
+
+    <div class="d-flex flex-row align-items-center gap-3" *ngIf="!loading">
+      <h3 class="mt-2 shortlink-details-title" (click)="copyToClipboard()">
+        <lucide-angular [img]="ClipboardCopyIcon" size="24" class="me-1 mb-1"/>{{ urlDetails.shortUrl }}
+      </h3>
+      <span *ngIf="isShortlinkExpired()" class="badge rounded-pill bg-danger">
+          Scaduto
+      </span>
+    </div>
+
+    <div class="d-flex flex-row align-items-center gap-3" *ngIf="loading">
+      <h3 class="mt-2 shortlink-details-title">
+        <lucide-angular [img]="RefreshCwIcon" size="24" class="me-1 mb-1"/> Caricamento...
+      </h3>
+    </div>
+
+    <!-- Filtri e controlli -->
+    <div class="d-flex flex-row gap-2 align-items-center">
+      <!-- Toggle per modalità live -->
+      <div class="form-check form-switch">
+        <label class="form-check-label" for="liveMode">Modalità live</label>
+        <input class="form-check-input" type="checkbox" id="liveMode" [(ngModel)]="liveMode"
+               (change)="onLiveModeChange()">
+      </div>
+
+      <div class="d-flex h-100 border-end mx-1">
+        <hr>
+      </div>
+
+      <!-- Filtro per data (disabilitato in modalità live) -->
+      <span class="text-secondary text-uppercase sidebar-heading d-block me-1">Periodo: </span>
+      <div class="p-field">
+        <p-calendar id="startDate" dateFormat="dd/mm/yy" [(ngModel)]="startDate" [showIcon]="true"
+                    [disabled]="liveMode"/>
+      </div>
+      <span class="text-secondary text-uppercase sidebar-heading d-block">/</span>
+      <div class="p-field">
+        <p-calendar id="endDate" dateFormat="dd/mm/yy" [(ngModel)]="endDate" [showIcon]="true" [disabled]="liveMode"/>
+      </div>
+      <div class="p-field flex align-items-end">
+        <button type="button" (click)="applyFilter()" class="btn btn-primary h-100" [disabled]="liveMode">
+          <lucide-angular [img]="RefreshCwIcon" size="16" class="mb-1 hov-cur h-100"/>
+        </button>
+      </div>
+
+      <div class="d-flex h-100 border-end">
+        <hr>
+      </div>
+
+      <!-- Filtro per la tabella -->
+      <input
+        type="text"
+        style="min-width: 230px"
+        pInputText placeholder="Filtro tabella"
+        (input)="onGlobalFilter($event)"
+      />
+
+      <div class="d-flex h-100 border-end">
+        <hr>
+      </div>
+
+      <button class="btn btn-primary h-100" (click)="openEditModal()">
+        <lucide-angular [img]="EditIcon" size="16" class="mb-1 hov-cur h-100"/>
+      </button>
+      <button class="btn btn-danger h-100" (click)="openDeleteModal()">
+        <lucide-angular [img]="TrashIcon" size="16" class="mb-1 hov-cur h-100"/>
+      </button>
+      <button class="btn btn-secondary h-100" (click)="openQrModal()">
+        <lucide-angular [img]="QrCodeIcon" size="16" class="mb-1 hov-cur h-100"/>
+      </button>
+    </div>
+  </div>
+
+  <!-- Informazioni sull'URL -->
+  <div class="ms-3 mb-1" *ngIf="urlDetails && !loading">
+    <p class="mb-0">
+      <strong>URL originale:</strong>
+      <a href="{{ urlDetails.originalUrl }}" target="_blank">{{ urlDetails.originalUrl }}</a>
+      <br>
+
+      <strong>Data creazione:</strong>
+      {{ urlDetails.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}
+      <br>
+
+      <strong>Scadenza:</strong>
+      {{ urlDetails.expirationDate === 'never' ? 'Mai' :
+      (urlDetails.expirationDate | date:'dd/MM/yyyy HH:mm:ss') }}
+    </p>
+  </div>
+
+  <!-- Indicatore di caricamento -->
+  <div *ngIf="loading" class="alert alert-secondary mt-2 d-flex flex-row align-items-center" role="alert">
+    <lucide-angular [img]="RefreshCwIcon" size="16" class="me-2 d-block"/>
+    <div>
+      Sto caricando le statistiche del link...
+    </div>
+  </div>
+
+  <!-- Contenuto principale (statistiche e tabella) -->
+  <div *ngIf="(!loading && urlStats) && !isVisitCountZero()" class="mt-3">
+    <!-- Grafico delle visite giornaliere -->
+    <div class="card mb-2">
+      <div class="card-body">
+        <span class="sidebar-heading d-block me-1 text-muted">
+          Visite divise per giorni &nbsp;|&nbsp; Totale: <B>{{ urlStats.visitCount }}</B>
+        </span>
+        <p-chart type="bar" [data]="visitsByDayData" [options]="visitsByDayOptions" height="280px"/>
+      </div>
+    </div>
+
+    <!-- Tabella delle visite -->
+    <p-table
+      [value]="filteredVisits"
+      [paginator]="true"
+      [rows]="10"
+      size="small"
+      showGridlines="true"
+      [showCurrentPageReport]="true"
+      [tableStyle]="{'min-width': '50rem'}"
+      currentPageReportTemplate="Record da {first} a {last} - tot. {totalRecords}"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Data visita</th>
+          <th>Indirizzo IP</th>
+          <th>User Agent</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-visit>
+        <tr>
+          <td>{{ visit.visitDate | date:'dd/MM/yy HH:mm:ss' }}</td>
+          <td>{{ visit.ipAddress }}</td>
+          <td>{{ visit.userAgent }}</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="3" class="text-center">
+            Nessuna visita registrata corrispondente alla ricerca corrente.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Messaggio quando non ci sono visite -->
+  <div *ngIf="(!loading && !urlStats) || (isVisitCountZero() && !loading)">
+    <div class="alert alert-secondary mt-2 d-flex flex-row align-items-center" role="alert">
+      <lucide-angular [img]="AlertTriangleIcon" size="16" class="me-2 d-block"/>
+      <div>
+        Nessun dato disponibile per il periodo selezionato.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal per la modifica dell'URL -->
+<div *ngIf="showEditModal">
+  <app-draggable-modal
+    title="Modifica URL"
+    (close)="showEditModal = false"
+    [width]="'550px'"
+  >
+    <div class="p-3">
+      <div class="mb-3">
+        <label for="originalUrl" class="form-label">URL originale</label>
+        <input type="text" class="form-control" id="originalUrl" [(ngModel)]="editFormData.originalUrl" required>
+      </div>
+      <div class="mb-3">
+        <label for="expirationDate" class="form-label">Data di scadenza (opzionale)</label>
+        <input type="datetime-local" class="form-control" id="expirationDate" [(ngModel)]="editFormData.expirationDate">
+      </div>
+      <div class="d-flex justify-content-end gap-2">
+        <button class="btn btn-secondary" (click)="showEditModal = false">Annulla</button>
+        <button class="btn btn-primary" (click)="editUrl()">Salva</button>
+      </div>
+    </div>
+  </app-draggable-modal>
+</div>
+
+<!-- Modal per l'eliminazione dell'URL -->
+<div *ngIf="showDeleteModal">
+  <app-draggable-modal
+    title="Elimina URL"
+    (close)="showDeleteModal = false"
+    [width]="'450px'"
+  >
+    <div class="p-1">
+      <p class="pb-2">
+        Sei sicuro di voler eliminare questo URL?<br>
+        <strong>{{ shortCode }}</strong> - {{ urlDetails?.originalUrl }} <br>
+        <span class="text-danger">Questa azione non può essere annullata.</span>
+      </p>
+      <div class="d-flex justify-content-end gap-2">
+        <button class="btn btn-secondary" (click)="showDeleteModal = false">Annulla</button>
+        <button class="btn btn-danger" (click)="deleteUrl()">Elimina</button>
+      </div>
+    </div>
+  </app-draggable-modal>
+</div>
+
+<!-- Modal per il codice QR -->
+<div *ngIf="showQrModal">
+  <app-draggable-modal
+    title="Codice QR"
+    (close)="showQrModal = false"
+    [width]="'400px'"
+  >
+    <div class="p-3 text-center">
+      <p>Scansiona questo codice QR per accedere all'URL:</p>
+      <p><strong>{{ urlDetails?.shortUrl }}</strong></p>
+      <div class="d-flex justify-content-center my-3">
+        <!-- Qui verrà inserito il codice QR in futuro -->
+        <div class="border p-3">
+          <p>Placeholder per il codice QR</p>
+          <p>URL: {{ urlDetails?.shortUrl }}</p>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-secondary" (click)="showQrModal = false">Chiudi</button>
+      </div>
+    </div>
+  </app-draggable-modal>
+</div>

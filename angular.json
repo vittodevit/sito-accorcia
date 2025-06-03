@@ -13,6 +13,8 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "dist/sito-accorcia-demo",
+            "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -28,6 +30,9 @@
               "src/styles.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "@angular/material/prebuilt-themes/azure-blue.css"
+            ],
+            "scripts": [
+              "src/app/themeSwitcher.js"
             ]
           },
           "configurations": {

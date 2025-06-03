@@ -7,10 +7,7 @@
           <h2 class="title">{{ title }}</h2>
         </div>
         <hr style="margin-top: 13px; !important;">
-
-        <!-- Content projection for the form -->
         <ng-content></ng-content>
-
         <hr>
         <div class="text-center">
           {{ linkPrompt }}
@@ -21,4 +18,13 @@
       </div>
     </div>
   </div>
+</div>
+<div class="position-fixed bottom-0 end-0 mb-3 me-3" style="z-index: 1500;">
+  <button
+    class="btn btn-primary"
+    style="padding-bottom: 10px; box-sizing: initial;"
+    (click)="themeSwitch()"
+  >
+    <lucide-angular [img]="sunMoonIcon" size="20"/>
+  </button>
 </div>

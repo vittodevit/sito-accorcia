@@ -1,2 +1,119 @@
-CORPO DELLA PAGINA <br>
-<code>apiurl: {{apiUrl}}</code> <br>
+<div class="mt-2 me-3">
+  <!-- Date Range Filter -->
+  <div class="d-flex flex-row justify-content-between ms-1 align-items-center">
+    <h3 class="mt-1">Statistiche account</h3>
+    <div class="d-flex flex-row gap-2 align-items-center">
+      <span class="text-secondary text-uppercase sidebar-heading d-block me-1">Periodo: </span>
+      <div class="p-field">
+        <p-calendar id="startDate" dateFormat="dd/mm/yy" [(ngModel)]="startDate" [showIcon]="true"/>
+      </div>
+      <span class="text-secondary text-uppercase sidebar-heading d-block">/</span>
+      <div class="p-field">
+        <p-calendar id="endDate" dateFormat="dd/mm/yy" [(ngModel)]="endDate" [showIcon]="true"/>
+      </div>
+      <div class="p-field flex align-items-end">
+        <button type="button" (click)="applyFilter()" class="btn btn-primary h-100">
+          <lucide-angular [img]="RefreshCwIcon" size="16" class="mb-1 hov-cur h-100"/>
+        </button>
+      </div>
+      <div class="d-flex h-100 border-end">
+        <hr>
+      </div>
+      <input
+        type="text"
+        style="min-width: 230px"
+        pInputText placeholder="Filtro tabella"
+        (input)="onGlobalFilter($event)"
+      />
+      <div class="d-flex h-100 border-end">
+        <hr>
+      </div>
+      <a routerLink="/new" class="btn btn-success">
+        <lucide-angular [img]="PlusCircleIcon" size="16" class=""/>
+        Nuovo link
+      </a>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="alert alert-secondary mt-2 d-flex flex-row align-items-center" role="alert">
+    <lucide-angular [img]="RefreshCwIcon" size="16" class="me-2 d-block"/>
+    <div>
+      Sto caricando le statistiche del tuo account...
+    </div>
+  </div>
+
+  <div *ngIf="(!loading && accountStats) && !isVisitCountZero()" class="mt-2">
+
+    <div class="row g-2 mb-2">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <span class="sidebar-heading d-block me-1 text-muted">
+              Visite divise per giorni &nbsp;|&nbsp; Totale: <B>{{ accountStats.visitCount }}</B>
+            </span>
+            <p-chart type="bar" [data]="visitsByDayData" [options]="visitsByDayOptions" height="280px"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-auto">
+        <div class="card">
+          <div class="card-body">
+            <span class="sidebar-heading d-block me-1 text-muted" style="margin-bottom: 10px;">
+              Percentuale per link
+            </span>
+            <p-chart type="pie" [data]="totalVisitsData" [options]="totalVisitsOptions" height="270px"/>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p-table
+      [value]="filteredVisits"
+      [paginator]="true"
+      [rows]="10"
+      size="small"
+      showGridlines="true"
+      [showCurrentPageReport]="true"
+      [tableStyle]="{'min-width': '50rem'}"
+      currentPageReportTemplate="Record da {first} a {last} - tot. {totalRecords}"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Link</th>
+          <th>Data visita</th>
+          <th>Indirizzo IP</th>
+          <th>User Agent</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-visit>
+        <tr>
+          <td>{{ visit.shortCode }}</td>
+          <td>{{ visit.visitDate | date:'dd/MM/yy hh:mm:ss' }}</td>
+          <td>{{ visit.ipAddress }}</td>
+          <td>{{ visit.userAgent }}</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center">
+            Nessuna visita registrata corrispondente alla ricerca corrente.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+  </div>
+
+  <div *ngIf="(!loading && !accountStats) || (isVisitCountZero() && !loading)">
+    <div class="alert alert-secondary mt-2 d-flex flex-row align-items-center" role="alert">
+      <lucide-angular [img]="AlertTriangleIcon" size="16" class="me-2 d-block"/>
+      <div>
+        Nessun dato disponibile per il periodo selezionato.
+      </div>
+    </div>
+  </div>
+</div>

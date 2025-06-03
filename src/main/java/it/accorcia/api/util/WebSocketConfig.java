@@ -1,6 +1,7 @@
 package it.accorcia.api.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -16,6 +17,13 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocket
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    /**
+     * URL del dashboard di monitoraggio dell'applicazione per il pulsante "Dashboard".
+     * Viene iniettato tramite la configurazione dell'applicazione.
+     */
+    @Value("${deployment.dashboard.url}")
+    private String dashboardUrl;
 
     /**
      * Utilità per la gestione dei token JWT, utilizzata per l'autenticazione delle connessioni WebSocket.
@@ -44,8 +52,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-            .setAllowedOriginPatterns("*")
-            .addInterceptors(new JwtHandshakeInterceptor(jwtUtil))
+            .setAllowedOriginPatterns(dashboardUrl)
+            //.addInterceptors(new JwtHandshakeInterceptor(jwtUtil))
             .withSockJS();
     }
 }

@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { Observable, Subject } from 'rxjs';
 import SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
+import {environment} from '../../environments/environment';
 
 /**
  * Servizio per la gestione delle connessioni WebSocket.
@@ -33,7 +34,8 @@ export class WebSocketService {
    * Si connette al server WebSocket
    */
   connect(): void {
-    const socket = new SockJS('/ws');
+    console.log('Connessione WebSocket in corso...', environment.WS_URL);
+    const socket = new SockJS(environment.WS_URL);
     this.stompClient = Stomp.over(socket);
 
     // Aggiunge il token JWT alla connessione WebSocket
@@ -87,14 +89,18 @@ export class WebSocketService {
    * @returns Un Observable che emette messaggi dal topic
    */
   subscribe(topic: string): Observable<any> {
+    console.log('Sottoscrizione WebSocket a', topic);
     if (!this.messageSubjects.has(topic)) {
+      console.log('Creazione di un nuovo Subject per il topic', topic);
       this.messageSubjects.set(topic, new Subject<any>());
     }
 
     if (this.connected && !this.subscriptions.has(topic)) {
+      console.log('Sottoscrizione WebSocket al topic', topic);
       this.subscribeToTopic(topic);
     } else if (!this.connected && this.authService.isAuthenticated()) {
       // Se non connesso ma autenticato, prova a connettersi
+      console.log('Non connesso, tentativo di connessione WebSocket');
       this.connect();
     }
 
