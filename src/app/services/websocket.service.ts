@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Observable, Subject } from 'rxjs';
+import { Stomp } from '@stomp/stompjs';
+import { environment } from '../../environments/environment';
 import SockJS from 'sockjs-client';
-import * as Stomp from 'stompjs';
-import {environment} from '../../environments/environment';
 
 /**
  * Servizio per la gestione delle connessioni WebSocket.
