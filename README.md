@@ -1,8 +1,15 @@
 
-# Documentazione API Accorciatore di URL
+# Documentazione API e Showcase Frontend
 
 ## Panoramica
 Un semplice servizio di accorciamento URL con gestione utenti, tracciamento dei link e aggiornamenti in tempo reale tramite WebSocket.
+
+Home page della dashboard:
+![image](https://github.com/user-attachments/assets/0070183f-a9ad-4b52-87de-f9a855349d24)
+
+Dettaglio di un link:
+![image](https://github.com/user-attachments/assets/9f73fe21-cb6a-4c03-a2f2-18412adcbe0a)
+
 
 ### Autenticazione
 
