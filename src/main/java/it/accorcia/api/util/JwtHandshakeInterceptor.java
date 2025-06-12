@@ -44,7 +44,6 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
         WebSocketHandler wsHandler,
         Map<String, Object> attributes
     ) {
-        System.out.println("Handshake WebSocket");
         String token = extractTokenFromQuery(request);
         if (token != null && jwtUtil.validateToken(token)) {
             String username = jwtUtil.getUsernameFromToken(token);
@@ -76,7 +75,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
         // cerca prima negli header
         String token = request.getHeaders().getFirst("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
-            return token.substring(7); // rimuove "Bearer "
+            return token.substring(7); // rimuove "Bearer " attenti allo spazio!
         }
         String query = request.getURI().getQuery();
         if (query != null && query.contains("token=")) {

@@ -387,6 +387,7 @@ Per tutte le altre eccezioni non gestite specificamente, viene restituito un err
 - Gli errori di validazione includono dettagli specifici per ogni campo non valido.
 ### Possibili miglioramenti
 - Implementare rate limiting per prevenire abusi del servizio.
+- Utilizzare i DTO anche per le risposte degli endpoint per garantire coerenza.
 - Effettuare migliori validazioni sui DTO lato backend.
 - Implementare ReCaptcha per prevenire spam nei form di registrazione e login.
 - Rendere la grafica del frontend più responsive e user-friendly.

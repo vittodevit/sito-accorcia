@@ -344,7 +344,7 @@ export class HomePage implements OnInit, OnDestroy {
     // Conta le visite effettive per ogni giorno
     this.visits.forEach(visit => {
       const visitDate = new Date(visit.visitDate);
-      const localDateStr = visitDate.toISOString().split('T')[0]; // Adjust for time zone
+      const localDateStr = visitDate.toISOString().split('T')[0]; // aggiusta tz
       if (visitsByDay[localDateStr] !== undefined) {
         visitsByDay[localDateStr]++;
       }else{
